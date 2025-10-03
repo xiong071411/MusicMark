@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= siteName %> - 用户管理</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <meta name="color-scheme" content="light dark" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><%= siteName %></div>
+    <nav>
+      <a href="/dashboard">听歌记录</a>
+      <a class="active" href="/admin/users">用户管理</a>
+      <form method="post" action="/logout" style="display:inline">
+        <button type="submit" class="btn">退出</button>
+      </form>
+    </nav>
+  </header>
+  <main class="container">
+    <% if (flash) { %>
+      <div class="alert <%= flash.type %>"><%= flash.message %></div>
+    <% } %>
+    <section class="card">
+      <h3>创建用户</h3>
+      <form method="post" action="/admin/users/create" class="grid-2">
+        <label>用户名<input name="username" required /></label>
+        <label>密码<input name="password" type="password" required /></label>
+        <label>角色
+          <select name="role">
+            <option value="user">user</option>
+            <option value="admin">admin</option>
+          </select>
+        </label>
+        <div></div>
+        <button class="btn primary" type="submit">创建</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h3>用户列表</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>角色</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u => { %>
+            <tr>
+              <td><%= u.id %></td>
+              <td><%= u.username %></td>
+              <td><%= u.role %></td>
+              <td><%= new Date(u.created_at * 1000).toLocaleString() %></td>
+              <td>
+                <form method="post" action="/admin/users/<%= u.id %>/reset" class="inline">
+                  <input name="password" type="password" placeholder="新密码" required />
+                  <button class="btn" type="submit">重置密码</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
+
+

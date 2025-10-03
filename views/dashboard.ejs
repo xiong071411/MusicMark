@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= siteName %> - 听歌记录</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <meta name="color-scheme" content="light dark" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><%= siteName %></div>
+    <nav>
+      <a href="/dashboard">听歌记录</a>
+      <% if (currentUser && currentUser.role === 'admin') { %>
+        <a href="/admin/users">用户管理</a>
+      <% } %>
+      <form method="post" action="/logout" style="display:inline">
+        <button type="submit" class="btn">退出</button>
+      </form>
+    </nav>
+  </header>
+  <main class="container">
+    <h2>听歌记录</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>开始时间</th>
+          <th>歌曲名</th>
+          <th>歌手</th>
+          <th>专辑</th>
+          <th>来源</th>
+          <th>时长(秒)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!listens || listens.length === 0) { %>
+          <tr><td colspan="6" style="text-align:center;color:#888">暂无记录</td></tr>
+        <% } else { %>
+          <% listens.forEach(item => { %>
+            <tr>
+              <td><%= new Date(item.started_at * 1000).toLocaleString() %></td>
+              <td><%= item.title %></td>
+              <td><%= item.artist || '' %></td>
+              <td><%= item.album || '' %></td>
+              <td><%= item.source || '' %></td>
+              <td><%= item.duration_sec || '' %></td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+      <div>共 <%= typeof total !== 'undefined' ? total : (listens?.length || 0) %> 条</div>
+      <% if (typeof page !== 'undefined') { %>
+        <div class="inline">
+          <a class="btn" href="/dashboard?page=1&limit=<%= pageSize %>">« 首页</a>
+          <a class="btn" href="/dashboard?page=<%= Math.max(1, page - 1) %>&limit=<%= pageSize %>">‹ 上一页</a>
+          <span>第 <%= page %> / <%= totalPages %> 页</span>
+          <a class="btn" href="/dashboard?page=<%= Math.min(totalPages, page + 1) %>&limit=<%= pageSize %>">下一页 ›</a>
+          <a class="btn" href="/dashboard?page=<%= totalPages %>&limit=<%= pageSize %>">末页 »</a>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>
+
+
