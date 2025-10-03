@@ -92,12 +92,17 @@ app.use((req, res) => {
 // Error handler
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
-  // For API
   if (res.headersSent) return;
+  // API 返回 JSON
   if (req.path && req.path.startsWith('/api/')) {
     return res.status(500).json({ ok: false, error: 'Internal Server Error' });
   }
-  res.status(500).render('500');
+  // Web 渲染 500；若视图缺失则兜底为纯文本
+  try {
+    return res.status(500).render('500');
+  } catch (_e) {
+    return res.status(500).type('text/plain').send('500 - Server Error');
+  }
 });
 
 // Boot
