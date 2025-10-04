@@ -12,6 +12,7 @@
     <div class="brand"><%= siteName %></div>
     <nav>
       <a href="/dashboard">听歌记录</a>
+      <a href="/stats">统计</a>
       <a class="active" href="/admin/users">用户管理</a>
       <form method="post" action="/logout" style="display:inline">
         <button type="submit" class="btn">退出</button>
@@ -22,11 +23,12 @@
     <% if (flash) { %>
       <div class="alert <%= flash.type %>"><%= flash.message %></div>
     <% } %>
-    <section class="card">
+    <section class="card shadow">
       <h3>创建用户</h3>
+      <p class="subtitle mb-1">创建后可在下方列表中重置密码</p>
       <form method="post" action="/admin/users/create" class="grid-2">
-        <label>用户名<input name="username" required /></label>
-        <label>密码<input name="password" type="password" required /></label>
+        <label>用户名<input name="username" required autocomplete="off" /></label>
+        <label>密码<input name="password" type="password" required autocomplete="new-password" /></label>
         <label>角色
           <select name="role">
             <option value="user">user</option>
@@ -38,8 +40,9 @@
       </form>
     </section>
 
-    <section class="card">
+    <section class="card mt-2">
       <h3>用户列表</h3>
+      <div class="table-wrap">
       <table class="table">
         <thead>
           <tr>
@@ -67,6 +70,7 @@
           <% }) %>
         </tbody>
       </table>
+      </div>
     </section>
   </main>
 </body>

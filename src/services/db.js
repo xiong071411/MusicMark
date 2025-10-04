@@ -136,4 +136,46 @@ export function countListensForUser(userId) {
   return data.listens.filter(l => l.user_id === Number(userId)).length;
 }
 
+// 统计：按天聚合数量、总时长、独立歌曲数、来源分布
+export function getUserStats(userId) {
+  const data = db?.data || { listens: [] };
+  const items = data.listens.filter(l => l.user_id === Number(userId));
+  const byDay = new Map(); // yyyy-mm-dd -> { count, duration, titles:Set }
+  const sourceMap = new Map(); // source -> count
+  let totalCount = 0;
+  let totalDuration = 0;
+  const uniqueTitles = new Set();
+
+  for (const l of items) {
+    totalCount += 1;
+    const d = new Date((l.started_at || 0) * 1000);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const dur = Number.isFinite(l.duration_sec) ? (l.duration_sec || 0) : 0;
+    totalDuration += dur;
+    uniqueTitles.add(`${l.title}||${l.artist||''}||${l.album||''}`);
+    if (!byDay.has(key)) byDay.set(key, { count: 0, duration: 0, titles: new Set() });
+    const agg = byDay.get(key);
+    agg.count += 1;
+    agg.duration += dur;
+    agg.titles.add(`${l.title}||${l.artist||''}||${l.album||''}`);
+    const src = (l.source || 'unknown');
+    sourceMap.set(src, (sourceMap.get(src) || 0) + 1);
+  }
+
+  const daily = Array.from(byDay.entries()).sort((a,b)=>a[0].localeCompare(b[0])).map(([date, v])=>({
+    date,
+    count: v.count,
+    duration_sec: v.duration,
+    unique_titles: v.titles.size
+  }));
+  const sources = Array.from(sourceMap.entries()).sort((a,b)=>b[1]-a[1]).map(([name, count])=>({ name, count }));
+  return {
+    total_count: totalCount,
+    total_duration_sec: totalDuration,
+    unique_titles: uniqueTitles.size,
+    daily,
+    sources
+  };
+}
+
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { loginWithCredentials, logout, requireLogin, requireAdmin } from '../services/auth.js';
-import { listListensForUser, listUsers, createUser, updateUserPassword, countListensForUser } from '../services/db.js';
+import { listListensForUser, listUsers, createUser, updateUserPassword, countListensForUser, getUserStats } from '../services/db.js';
 
 const router = Router();
 
@@ -37,6 +37,10 @@ router.get('/dashboard', requireLogin, (req, res) => {
   const listens = listListensForUser(req.session.userId, pageSize, offset);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   res.render('dashboard', { listens, page, totalPages, pageSize, total });
+});
+router.get('/stats', requireLogin, (req, res) => {
+  const stats = getUserStats(req.session.userId);
+  res.render('stats', { stats });
 });
 
 router.get('/admin/users', requireLogin, requireAdmin, (req, res) => {
