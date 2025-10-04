@@ -119,6 +119,13 @@ export function listListensForUser(userId, limit = 100, offset = 0) {
   return rows.slice(offset, offset + limit);
 }
 
+export function listAllListensForUser(userId) {
+  const data = db?.data || { listens: [] };
+  return data.listens
+    .filter(l => l.user_id === Number(userId))
+    .sort((a, b) => b.started_at - a.started_at);
+}
+
 export function listUsers() {
   const data = db?.data || { users: [] };
   return [...data.users].sort((a, b) => a.id - b.id).map(u => ({ id: u.id, username: u.username, role: u.role, created_at: u.created_at }));
@@ -176,6 +183,25 @@ export function getUserStats(userId) {
     daily,
     sources
   };
+}
+
+// 听歌排行（按歌曲+歌手+专辑聚合计数），range: 'all' | 'week'
+export function getUserTopSongs(userId, range = 'all', limit = 50) {
+  const data = db?.data || { listens: [] };
+  const nowSec = Math.floor(Date.now() / 1000);
+  const since = range === 'week' ? (nowSec - 7 * 24 * 3600) : 0;
+  const items = data.listens.filter(l => l.user_id === Number(userId) && (since === 0 || (l.started_at || 0) >= since));
+  const map = new Map();
+  for (const l of items) {
+    const key = `${l.title}||${l.artist||''}||${l.album||''}`;
+    const v = map.get(key) || { title: l.title, artist: l.artist||'', album: l.album||'', count: 0, last_play: 0 };
+    v.count += 1;
+    v.last_play = Math.max(v.last_play, l.started_at || 0);
+    map.set(key, v);
+  }
+  return Array.from(map.values())
+    .sort((a,b)=> b.count - a.count || b.last_play - a.last_play)
+    .slice(0, limit);
 }
 
 

@@ -13,6 +13,7 @@
     <nav>
       <a href="/dashboard">听歌记录</a>
       <a class="active" href="/stats">统计</a>
+      <a href="/settings">设置</a>
       <% if (currentUser && currentUser.role === 'admin') { %>
         <a href="/admin/users">用户管理</a>
       <% } %>
@@ -33,16 +34,16 @@
       <div class="card shadow">
         <h3>总览</h3>
         <div class="inline mt-1" style="flex-wrap:wrap">
-          <div class="card" style="min-width:140px">
+          <div class="card" style="min-width:140px;flex:1 1 140px">
             <div class="subtitle">总条数</div>
             <div style="font-weight:700;font-size:1.25rem"><%= stats.total_count %></div>
           </div>
-          <div class="card" style="min-width:140px">
+          <div class="card" style="min-width:140px;flex:1 1 140px">
             <div class="subtitle">总时长</div>
             <% const td_m = Math.floor((stats.total_duration_sec||0)/60); const td_s = (stats.total_duration_sec||0)%60; %>
             <div style="font-weight:700;font-size:1.25rem"><%= td_m %>:<%= String(td_s).padStart(2,'0') %></div>
           </div>
-          <div class="card" style="min-width:140px">
+          <div class="card" style="min-width:140px;flex:1 1 140px">
             <div class="subtitle">独立歌曲</div>
             <div style="font-weight:700;font-size:1.25rem"><%= stats.unique_titles %></div>
           </div>
@@ -50,16 +51,28 @@
       </div>
 
       <div class="card">
-        <h3>来源分布</h3>
-        <% if (!stats.sources || stats.sources.length === 0) { %>
+        <div class="inline" style="justify-content:space-between;align-items:center;flex-wrap:wrap">
+          <h3>听歌排行</h3>
+          <div class="inline">
+            <a class="btn <%= range==='all' ? 'primary' : '' %>" href="/stats?range=all">所有时间</a>
+            <a class="btn <%= range==='week' ? 'primary' : '' %>" href="/stats?range=week">本周</a>
+          </div>
+        </div>
+        <% if (!top || top.length === 0) { %>
           <p class="muted">暂无数据</p>
         <% } else { %>
           <div class="table-wrap">
           <table class="table">
-            <thead><tr><th>来源</th><th>条数</th></tr></thead>
+            <thead><tr><th>#</th><th>歌曲</th><th class="hide-sm">歌手</th><th class="hide-sm">专辑</th><th>次数</th></tr></thead>
             <tbody>
-              <% stats.sources.forEach(s => { %>
-                <tr><td><%= s.name %></td><td><%= s.count %></td></tr>
+              <% top.forEach((t,idx) => { %>
+                <tr>
+                  <td><%= idx+1 %></td>
+                  <td class="ellipsis" style="max-width:240px"><%= t.title %></td>
+                  <td class="hide-sm ellipsis" style="max-width:200px"><%= t.artist %></td>
+                  <td class="hide-sm ellipsis" style="max-width:200px"><%= t.album %></td>
+                  <td><%= t.count %></td>
+                </tr>
               <% }) %>
             </tbody>
           </table>

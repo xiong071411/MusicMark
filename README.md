@@ -7,18 +7,11 @@
 - 纯 JS 文件存储（lowdb json），零编译，跨平台易部署
 
 ## 本地快速开始（Windows）
-方式 A：一键脚本（推荐）
-```
-powershell -ExecutionPolicy Bypass -File .\setup.ps1
-```
-脚本会自动安装依赖、创建 `data` 目录、生成随机 `SESSION_SECRET` 的 `.env`，并启动开发服务。
-
-方式 B：手动步骤
 1) 安装依赖
 ```bash
 npm install
 ```
-2) 创建 `.env`
+1) 创建 `.env`
 ```
 PORT=3000
 SITE_NAME=MusicMark
@@ -27,7 +20,7 @@ DATA_DIR=./data
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
 ```
-3) 启动开发
+1) 启动开发
 ```bash
 npm run dev
 ```

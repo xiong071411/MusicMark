@@ -13,6 +13,7 @@
     <nav>
       <a href="/dashboard">听歌记录</a>
       <a href="/stats">统计</a>
+      <a href="/settings">设置</a>
       <a class="active" href="/admin/users">用户管理</a>
       <form method="post" action="/logout" style="display:inline">
         <button type="submit" class="btn">退出</button>
@@ -46,22 +47,22 @@
       <table class="table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th class="hide-sm">ID</th>
             <th>用户名</th>
             <th>角色</th>
-            <th>创建时间</th>
+            <th class="hide-sm">创建时间</th>
             <th>操作</th>
           </tr>
         </thead>
         <tbody>
           <% users.forEach(u => { %>
             <tr>
-              <td><%= u.id %></td>
+              <td class="hide-sm"><%= u.id %></td>
               <td><%= u.username %></td>
               <td><%= u.role %></td>
-              <td><%= new Date(u.created_at * 1000).toLocaleString() %></td>
+              <td class="hide-sm"><%= new Date(u.created_at * 1000).toLocaleString() %></td>
               <td>
-                <form method="post" action="/admin/users/<%= u.id %>/reset" class="inline">
+                <form method="post" action="/admin/users/<%= u.id %>/reset" class="inline stack-sm">
                   <input name="password" type="password" placeholder="新密码" required />
                   <button class="btn" type="submit">重置密码</button>
                 </form>

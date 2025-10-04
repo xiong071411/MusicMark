@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { loginWithCredentials, logout, requireLogin, requireAdmin } from '../services/auth.js';
-import { listListensForUser, listUsers, createUser, updateUserPassword, countListensForUser, getUserStats } from '../services/db.js';
+import { listListensForUser, listUsers, createUser, updateUserPassword, countListensForUser, getUserStats, getUserTopSongs, listAllListensForUser } from '../services/db.js';
+import XLSX from 'xlsx';
 
 const router = Router();
 
@@ -39,8 +40,46 @@ router.get('/dashboard', requireLogin, (req, res) => {
   res.render('dashboard', { listens, page, totalPages, pageSize, total });
 });
 router.get('/stats', requireLogin, (req, res) => {
+  const range = (req.query.range === 'week') ? 'week' : 'all';
   const stats = getUserStats(req.session.userId);
-  res.render('stats', { stats });
+  const top = getUserTopSongs(req.session.userId, range, 30);
+  res.render('stats', { stats, top, range });
+});
+
+router.get('/settings', requireLogin, (req, res) => {
+  res.render('settings');
+});
+
+router.get('/settings/export', requireLogin, (req, res) => {
+  const format = (req.query.format || 'csv').toLowerCase();
+  const rows = listAllListensForUser(req.session.userId);
+  const data = rows.map(r => ({
+    id: r.id,
+    title: r.title,
+    artist: r.artist || '',
+    album: r.album || '',
+    source: r.source || '',
+    started_at: new Date((r.started_at||0)*1000).toISOString(),
+    duration_sec: r.duration_sec || '',
+    external_id: r.external_id || ''
+  }));
+
+  if (format === 'xlsx' || format === 'excel') {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'listens');
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="listens.xlsx"');
+    return res.send(buf);
+  }
+
+  // default CSV
+  const ws = XLSX.utils.json_to_sheet(data);
+  const csv = XLSX.utils.sheet_to_csv(ws);
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="listens.csv"');
+  return res.send('\uFEFF' + csv);
 });
 
 router.get('/admin/users', requireLogin, requireAdmin, (req, res) => {

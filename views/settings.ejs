@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= siteName %> - 设置</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <meta name="color-scheme" content="light dark" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><%= siteName %></div>
+    <nav>
+      <a href="/dashboard">听歌记录</a>
+      <a href="/stats">统计</a>
+      <a class="active" href="/settings">设置</a>
+      <% if (currentUser && currentUser.role === 'admin') { %>
+        <a href="/admin/users">用户管理</a>
+      <% } %>
+      <form method="post" action="/logout" style="display:inline">
+        <button type="submit" class="btn">退出</button>
+      </form>
+    </nav>
+  </header>
+  <main class="container">
+    <h2>设置</h2>
+    <section class="card mt-2">
+      <h3>导出听歌记录</h3>
+      <p class="subtitle">导出当前账号的全部记录为 CSV 或 Excel</p>
+      <div class="inline" style="flex-wrap:wrap">
+        <a class="btn" href="/settings/export?format=csv">导出 CSV</a>
+        <a class="btn" href="/settings/export?format=xlsx">导出 Excel</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
+
+

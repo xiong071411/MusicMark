@@ -13,6 +13,7 @@
     <nav>
       <a class="active" href="/dashboard">听歌记录</a>
       <a href="/stats">统计</a>
+      <a href="/settings">设置</a>
       <% if (currentUser && currentUser.role === 'admin') { %>
         <a href="/admin/users">用户管理</a>
       <% } %>
@@ -28,7 +29,7 @@
         <div class="subtitle">最近播放轨迹</div>
       </div>
     </div>
-    <div class="card mt-2">
+    <div class="card mt-2 desktop-only">
     <div class="table-wrap">
     <table class="table">
       <thead>
@@ -66,6 +67,36 @@
       </tbody>
     </table>
     </div>
+    </div>
+
+    <!-- Mobile list -->
+    <div class="mobile-only mt-2">
+      <% if (!listens || listens.length === 0) { %>
+        <div class="card muted">暂无记录</div>
+      <% } else { %>
+        <div class="stack">
+          <% listens.forEach(item => { %>
+            <div class="card">
+              <div class="inline" style="justify-content:space-between">
+                <div class="ellipsis" style="max-width:65%"><strong><%= item.title %></strong></div>
+                <div class="muted" style="font-size:.9rem"><%= new Date(item.started_at * 1000).toLocaleString() %></div>
+              </div>
+              <div class="subtitle ellipsis"><%= item.artist || '' %> <%= item.album ? ('· ' + item.album) : '' %></div>
+              <div class="inline" style="justify-content:space-between">
+                <div class="muted"><%= item.source || '' %></div>
+                <div>
+                  <% if (typeof item.duration_sec === 'number' && item.duration_sec > 0) { %>
+                    <% const m = Math.floor(item.duration_sec / 60); const s = item.duration_sec % 60; %>
+                    <%= m %>:<%= String(s).padStart(2,'0') %>
+                  <% } else { %>
+                    <span class="muted">—</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
