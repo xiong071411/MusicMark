@@ -21,6 +21,10 @@
     <form method="post" action="/login" class="stack" autocomplete="off">
       <label>用户名<input name="username" required autocomplete="username" /></label>
       <label>密码<input name="password" type="password" required autocomplete="new-password" /></label>
+      <label style="display:flex;align-items:center;gap:8px">
+        <input type="checkbox" name="remember" value="1" />
+        <span>自动登录（30 天免登录）</span>
+      </label>
       <button type="submit" class="btn primary">登录</button>
     </form>
     <p class="subtitle mt-2 text-center">默认管理员账号在首次启动时会自动创建</p>

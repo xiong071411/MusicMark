@@ -205,3 +205,13 @@ export function getUserTopSongs(userId, range = 'all', limit = 50) {
 }
 
 
+export async function deleteListensForUser(userId, ids) {
+  const dbi = await getDb();
+  const idSet = new Set((ids || []).map(x => Number(x)));
+  const before = dbi.data.listens.length;
+  dbi.data.listens = dbi.data.listens.filter(l => !(l.user_id === Number(userId) && idSet.has(l.id)));
+  const removed = before - dbi.data.listens.length;
+  await dbi.write();
+  return removed;
+}
+

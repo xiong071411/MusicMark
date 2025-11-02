@@ -42,6 +42,15 @@
     </section>
 
     <section class="card mt-2">
+      <h3>导入听歌记录（CSV）</h3>
+      <p class="subtitle mb-1">仅管理员可见。文件需包含表头：title, artist, album, source, started_at, duration_sec, external_id（可留空）。</p>
+      <form method="post" action="/admin/import/listens" enctype="multipart/form-data" class="inline" style="gap:12px;align-items:center">
+        <input type="file" name="file" accept=".csv,.xlsx,.xls,text/csv" required />
+        <button class="btn" type="submit">开始导入</button>
+      </form>
+    </section>
+
+    <section class="card mt-2">
       <h3>用户列表</h3>
       <div class="table-wrap">
       <table class="table">

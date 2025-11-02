@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "reset-admin": "node scripts/reset_admin.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -16,6 +17,7 @@
     "helmet": "^7.1.0",
     "lowdb": "^7.0.1",
     "morgan": "^1.10.0",
+    "multer": "^2.0.2",
     "session-file-store": "^1.5.0",
     "xlsx": "^0.18.5",
     "zod": "^3.23.8"

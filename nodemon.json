@@ -1,0 +1,12 @@
+{
+  "watch": ["src", "views"],
+  "ext": "js,ejs",
+  "ignore": [
+    "data/**",
+    "public/**",
+    "musicmark_main.bundle",
+    "*.bundle"
+  ]
+}
+
+

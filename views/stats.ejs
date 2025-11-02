@@ -40,8 +40,7 @@
           </div>
           <div class="card" style="min-width:140px;flex:1 1 140px">
             <div class="subtitle">总时长</div>
-            <% const td_m = Math.floor((stats.total_duration_sec||0)/60); const td_s = (stats.total_duration_sec||0)%60; %>
-            <div style="font-weight:700;font-size:1.25rem"><%= td_m %>:<%= String(td_s).padStart(2,'0') %></div>
+            <div style="font-weight:700;font-size:1.25rem"><%= totalHms %></div>
           </div>
           <div class="card" style="min-width:140px;flex:1 1 140px">
             <div class="subtitle">独立歌曲</div>
@@ -97,7 +96,7 @@
             </tr>
           </thead>
           <tbody>
-            <% stats.daily.forEach(d => { %>
+            <% (dailyItems || stats.daily).forEach(d => { %>
               <% const dm = Math.floor((d.duration_sec||0)/60); const ds = (d.duration_sec||0)%60; %>
               <tr>
                 <td><%= d.date %></td>
@@ -108,6 +107,16 @@
             <% }) %>
           </tbody>
         </table>
+        </div>
+        <div class="inline" style="justify-content:space-between;align-items:center;margin-top:8px">
+          <div>共 <%= stats.daily.length %> 天</div>
+          <div class="inline">
+            <a class="btn" href="/stats?range=<%= range %>&dpage=1">« 首页</a>
+            <a class="btn" href="/stats?range=<%= range %>&dpage=<%= Math.max(1, (dailyPage||1) - 1) %>">‹ 上一页</a>
+            <span>第 <%= dailyPage || 1 %> / <%= dailyTotalPages || 1 %> 页</span>
+            <a class="btn" href="/stats?range=<%= range %>&dpage=<%= Math.min((dailyTotalPages||1), (dailyPage||1) + 1) %>">下一页 ›</a>
+            <a class="btn" href="/stats?range=<%= range %>&dpage=<%= dailyTotalPages || 1 %>">末页 »</a>
+          </div>
         </div>
       <% } %>
     </section>
